@@ -18,6 +18,8 @@ var trainName = "";
 var destination = "";
 var firstTrain = 0;
 var frequency = "";
+var nextArrival = 0;
+var minsAway = "";
 
 // Capture Button Click
 $("#add-user").on("click", function (event) {
@@ -28,6 +30,8 @@ $("#add-user").on("click", function (event) {
     destination = $("#destination-input").val().trim();
     firstTrain = moment($('#firstTrain-input').val().trim(), "HH:mm").format("");
     frequency = $("#frequency-input").val().trim();
+    nextArrival = moment($('#nextArrival-input').val().trim(), "HH:mm").format("");
+    minsAway = $("#minsAway-input").val().trim();
 
     // Code for the push TO firebase; object holding key value pairs to push to firebase
     dataRef.ref().push({
@@ -36,6 +40,8 @@ $("#add-user").on("click", function (event) {
         tdestination: destination,
         tFirst: firstTrain,
         tfreq: frequency,
+        nextArrival: nextArrival,
+        minsAway: minsAway,
         dateAdded: firebase.database.ServerValue.TIMESTAMP
 
     });
@@ -49,13 +55,15 @@ dataRef.ref().on("child_added", function (childSnapshot) {
     var destination = childSnapshot.val().tdestination;
     var firstTrain = childSnapshot.val().tFirst;
     var frequency = childSnapshot.val().tfreq;
+    var nextArrival = childSnapshot.val().arrive;
+    var minsAway = childSnapshot.val().tMinutesTillTrain;
 
     // Log everything that's coming out of snapshot
-    console.log("///////////////////////////////");
     console.log(childSnapshot.val().trainName);
     console.log(childSnapshot.val().destination);
     console.log(childSnapshot.val().frequency);
-
+    console.log(childSnapshot.val().nextArrival);
+    console.log(childSnapshot.val().minsAway);
 
     // First Time (pushed back 1 year to make sure it comes before current time)
     var firstTimeConverted = moment(firstTrain, "HH:mm").subtract(1, "years");
@@ -78,19 +86,19 @@ dataRef.ref().on("child_added", function (childSnapshot) {
     console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
 
     //next train
-    var nextTrain = moment().add(tMinutesTillTrain, "minutes");
-    var nextTrainConverted = moment(nextTrain).format("hh:mm a");
-    // console.log("ARRIVAL TIME: " + moment(nextTrain).format("HH:mm"));
+    var nextArrival = moment().add(tMinutesTillTrain, "minutes");
+    var nextArrivalConverted = moment(nextArrival).format("hh:mm a");
 
-    // full list of items to the well
-    $("#current-trains").append("<div class='well'><span class='trainName'> " + childSnapshot.val().trainName +
-        " </span><span class='destination'> " + childSnapshot.val().destination +
-        " </span><span class='firstTrain'> " + childSnapshot.val().firstTrain +
-        " </span><span class='frequency'> " + childSnapshot.val().frequency +
-        " </span></div>");
-
-    $("#trainTable > tbody").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" + "Every " + frequency + " minutes" + "</td><td>" + nextTrainConverted + "</td><td>" + tMinutesTillTrain + "</td></tr>");
-
+    // Create the new row
+    var newRow = $("<tr>").append(
+        $("<td>").text(trainName),
+        $("<td>").text(destination),
+        $("<td>").text(frequency),
+        $("<td>").text(nextArrival),
+        $("<td>").text(tMinutesTillTrain),
+      );
+      // Append the new row to the table
+      $("#train-table").append(newRow);
 
     // Handle the errors
 }, function (errorObject) {

@@ -53,12 +53,18 @@
                 <th>Train Name</th>
                 <th>Destination</th>
                 <th>Frequency (min)</th>
-                <th>
-                  Next Arrival</th>
+                <th>Next Arrival</th>
                 <th>Minutes Away</th>
               </tr>
             </thead>
             <tbody id="train-table-rows">
+                <tbody>
+                    <td id="train-name" scope="col"></td>
+                    <td id="train-destination" scope="col"></td>
+                    <td id="train-freq" scope="col"></td>
+                    <td id="train-arrival" scope="col"></td>
+                    <td id="train-mins" scope="col"></td>
+                  </tbody>
             </tbody>
           </table>
         </div>
@@ -84,9 +90,16 @@
               <label for="frequency-input">Frequency (min)</label>
               <input class="form-control" id="frequency-input" type="number">
             </div>
+            <div class="form-group row">
+                <label for="nextArrival-input">Next Arrival Time (HH:mm-military time)</label>
+                <input class="form-control" id="nextArrival-input" type="text">
+              </div>
+              <div class="form-group row">
+                <label for="minsAway-input">Mins Away</label>
+                <input class="form-control" id="minsAway-input" type="number">
+              </div>
             <button class="btn btn-default" id="add-user" type="submit">Submit</button>
           </form>
-
         </div>
 
       </div>
